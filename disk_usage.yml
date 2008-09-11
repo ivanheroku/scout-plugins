@@ -1,0 +1,9 @@
+options:
+  max_capacity: 
+    name: Maximum Allowed Usage Percentage
+    notes: Default is 80%
+    default: 80
+  filesystem:
+    name: Filesystem to monitor
+    notes: Enter in the device where the FS is located
+    default: /dev/sda2
