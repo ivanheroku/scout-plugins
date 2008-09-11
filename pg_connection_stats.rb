@@ -19,10 +19,10 @@ class PostgresConnectionStatistics < Scout::Plugin
     end
 
     user = @options['user'] || 'root'
-    password, host, port, socket = @options.values_at %w(password host port socket)
+    password, host, port, dbname = @options.values_at %w(password host port dbname)
 
     now = Time.now
-    postgres = PGconn.connect(host, port, nil, nil, user, user, password)
+    postgres = PGconn.connect(host, port, nil, nil, dbname, user, password)
 
     result = postgres.query('select datname, count(*) from pg_stat_activity group by datname;')
 
@@ -44,29 +44,5 @@ class PostgresConnectionStatistics < Scout::Plugin
     { :report => report, :memory => @memory }
   end
 
-  private
-  def calculate_counter(current_time, name, value)
-    result = nil
-
-    if @memory[name] && @memory[name].is_a?(Hash)
-      last_time, last_value = @memory[name].values_at(:time, :value)
-
-      # We won't log it if the value has wrapped
-      if value >= last_value
-        elapsed_seconds = last_time - current_time
-        elapsed_seconds = 1 if elapsed_seconds < 1
-
-        result = value - last_value
-
-        if @options['calculate_per_second']
-          result = result / elapsed_seconds.to_f
-        end
-      end
-    end
-
-    @memory[name] = { :time => current_time, :value => value }
-
-    result
-  end
 end
 
