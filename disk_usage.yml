@@ -7,3 +7,7 @@ options:
     name: Filesystem to monitor
     notes: Enter in the device where the FS is located
     default: /dev/sda2
+  command:
+    name: Command used to check filesystems
+    notes: On linux, default will scan local FS only
+    default: df -lh
