@@ -10,4 +10,4 @@ options:
   command:
     name: Command used to check filesystems
     notes: On linux, default will scan local FS only
-    default: df -h | egrep -v "slugs|tmpfs|udev"
+    default: df -lh | egrep -v "slugs|tmpfs|udev"
