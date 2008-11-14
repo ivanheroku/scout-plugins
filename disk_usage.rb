@@ -13,6 +13,8 @@ class DiskUsage < Scout::Plugin
   # /dev/mapper/VolGroup00-LogVol00
   #                        29G   25G  2.5G  92% /
   #
+  # Updates thanks to Pedro Belo 20081113
+  #
   def parse_file_systems(io, &line_handler)
     line_handler ||= lambda { |row| pp row }
     headers      =   nil
