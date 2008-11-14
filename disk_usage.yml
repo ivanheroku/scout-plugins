@@ -6,8 +6,8 @@ options:
   filesystem:
     name: Filesystem to monitor
     notes: Enter in the device where the FS is located
-    default: /dev/sda2
+    default:
   command:
     name: Command used to check filesystems
     notes: On linux, default will scan local FS only
-    default: df -lh
+    default: df -h | egrep -v "slugs|tmpfs|udev"

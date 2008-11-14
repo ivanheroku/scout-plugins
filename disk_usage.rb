@@ -20,7 +20,7 @@ class DiskUsage < Scout::Plugin
     row = ""
     io.each do |line|
       if headers.nil? and line =~ /\AFilesystem/
-        headers = line.split(" ", 6)
+        headers = line.split(" ", 6).map { |h| h.strip }
       else
         row << line
         if row =~  DF_RE
@@ -51,8 +51,15 @@ class DiskUsage < Scout::Plugin
       end
     end
     
-    # else just use the first line
-    df_line ||= df_lines.first
+    # else capture all filesystems
+	 puts df_lines.inspect
+	 df_line ||= df_lines.inject({}) do |h, row|
+	 	row.each do |header, value|
+			next if header == 'Mounted on'
+			h["#{header} mounted on #{row['Mounted on']}"] = value
+		end
+		h
+	end
       
     df_line.each do |name, value|
       report[:report][name.downcase.strip.to_sym] = value
@@ -60,11 +67,13 @@ class DiskUsage < Scout::Plugin
     
     max = @options["max_capacity"].to_i
 
-    if report[:report][:capacity].nil?
-      if max > 0 and report[:report][:"use%"].to_i > max
-        report[:alerts] << { :subject => "Maximum Capacity Exceeded " +
-                                       "(#{report[:report][:"use%"]})" }
-      end
+	 if max > 0
+		report[:report].each { |key, value|
+			if key.to_s.match("use%") and value.to_i > max
+				report[:alerts] << { :subject => "Maximum Capacity Exceeded " +
+												"(#{report[:report][key]})" }
+			end
+		}
     else
       if max > 0 and report[:report][:capacity].to_i > max
         report[:alerts] << { :subject => "Maximum Capacity Exceeded " +
