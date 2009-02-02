@@ -15,6 +15,7 @@ class DiskUsage < Scout::Plugin
   #
   # Updates thanks to Pedro Belo 20081113
   #
+
   def parse_file_systems(io, &line_handler)
     line_handler ||= lambda { |row| pp row }
     headers      =   nil
