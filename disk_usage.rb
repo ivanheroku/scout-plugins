@@ -35,7 +35,7 @@ class DiskUsage < Scout::Plugin
     end
   end
   
-  def build_report
+  def run
     df_command   = @options["command"] || "df -h"
     df_output    = `#{df_command}`
     
